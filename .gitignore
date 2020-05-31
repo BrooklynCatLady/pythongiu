@@ -1,2 +1,6 @@
 env
 .idea
+bin/__pycache__/
+.pytest_cache/
+bin/*.pyc
+tests/__pycache__/
