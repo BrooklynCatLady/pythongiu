@@ -17,6 +17,7 @@ class Model():
         self.set_grid_spacing()
         self.set_grid_colors()
         self.turn_grid_on()
+        self.set_stitch_parameters()
 
     def set_window_parameters(self):
         '''
@@ -26,7 +27,20 @@ class Model():
         self.window_color = WINDOW_COLOR
 
 
-    def calculate_grid_coordinates(self, canvas_width, canvas_height, line_distance_x, line_distance_y, start_x=0, start_y=0, end_x=0, end_y=0, increment=1):
+    def calculate_canvas_endpoints(self, canvas_width, canvas_height, start_x, start_y, end_x, end_y):
+        '''
+        Calculate the range in height and width of the canvas
+        '''
+        # Define endpoints
+        min_x = start_x
+        min_y = start_y
+        max_x = canvas_width - end_x - 1
+        max_y = canvas_height - end_y - 1
+        return min_x, min_y, max_x, max_y
+
+
+    def calculate_grid_coordinates(self, canvas_width, canvas_height, line_distance_x, line_distance_y,
+                                   start_x=0, start_y=0, end_x=0, end_y=0, increment=1):
         '''
         Reuseable Function that calculates grid coordinates for any lines that make a grid
         stitch_width = the distance in pixels of the stitch's width, also the distance between the gridlines
@@ -38,14 +52,7 @@ class Model():
         if line_distance_y <= 3: line_distance_y = 3
         if increment < 1: increment = 1
 
-        # Define endpoints
-        min_x = start_x
-        min_y = start_y
-        max_x = canvas_width - end_x - 1
-        max_y = canvas_height - end_y - 1
-
-        print("In calc")
-        print(min_x, min_y, max_x, max_y, increment)
+        min_x, min_y, max_x, max_y = self.calculate_canvas_endpoints(canvas_width, canvas_height, start_x, start_y, end_x, end_y)
 
         # Find the coordinates
         increment_coordinates, other_coordinates = [], []
@@ -127,3 +134,30 @@ class Model():
         '''
         self.is_grid_on = False
         self.button_grid_toggle_text = BUTTON_TEXT_GRID_OFF
+
+    def set_stitch_parameters(self):
+        '''
+        Set the stitch values
+        '''
+        self.stitch_color = STITCH_COLOR
+
+    def set_palette_color(self):
+        '''
+        Select the stitch color (eventually from a palette menu, but always have a starting color like the top of the list)
+        '''
+        self.stitch_color = '#ffff00'
+
+    def calculate_stitch_rectangles(self, canvas_width, canvas_height, rectangle_width, rectangle_height,
+                                    start_x=0, start_y=0, end_x=0, end_y=0):
+        '''
+        Calculate the tuples for the stitches
+        return [(x_0, y_0, x_1, y_1)]
+        '''
+        min_x, min_y, max_x, max_y = self.calculate_canvas_endpoints(canvas_width, canvas_height, start_x, start_y, end_x, end_y)
+
+        # Find the coordinates
+        rectangle_coordinates = []
+        for i in range(0, int((max_x-min_x)/rectangle_width)):
+            for j in range(0, int((max_y - min_y) / rectangle_height)):
+                rectangle_coordinates.append((i*rectangle_width+min_x, j*rectangle_height+min_y, (i+1)*rectangle_width+min_x, (j+1)*rectangle_height+min_y))
+        return rectangle_coordinates

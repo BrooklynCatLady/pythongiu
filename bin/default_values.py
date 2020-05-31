@@ -21,6 +21,7 @@ SYMBOL_COLOR = '#000000'
 WINDOW_COLOR = '#a9a9a9'
 CANVAS_COLOR = '#ffffff'
 CANVAS_BORDER_COLOR = '#ff0000'
+STITCH_COLOR = ''
 
 # Thread colors (placeholder until there is a DB)
 THREAD_BLACK = {'id': 1, 'name': 'Black', 'code': 'KLM 1', 'hexcode': '#ffffff'}

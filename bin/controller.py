@@ -19,6 +19,7 @@ class Controller():
         self.new_project()
         self.view.button_grid_toggle.configure(command=self.toggle_grid)
 
+
     def run(self):
         self.root.title("Cool Stitch Program")
         self.root.mainloop()
@@ -28,7 +29,9 @@ class Controller():
         Run the functions to start a new project
         '''
         self.new_canvas()
+        self.generate_stitches()
         self.generate_grid()
+        self.starting_palette()
 
     def generate_toolbar(self):
         '''
@@ -54,20 +57,14 @@ class Controller():
         '''
         # Set the colors and positions before building the grid
         self.model.set_grid_colors()
-        print("increment = ", self.model.grid_bold_increment)
         gridlines_bold, gridlines_light = self.model.calculate_grid_coordinates(self.model.canvas_width, self.model.canvas_height,
                                                                                 self.model.grid_spacing_width, self.model.grid_spacing_height,
                                                                                 start_x=self.model.grid_start_x, start_y=self.model.grid_start_y,
                                                                                 end_x=self.model.grid_end_x, end_y=self.model.grid_end_y,
                                                                                 increment=self.model.grid_bold_increment)
-        print(self.model.grid_bold_increment)
-        print(gridlines_bold)
-        print(gridlines_light)
-
         # Pass these to the view where the gridlines are drawn
         self.view.draw_lines(gridlines_light, self.model.grid_color_light, self.model.grid_thickness, self.model.grid_tag_light)
         self.view.draw_lines(gridlines_bold, self.model.grid_color_bold, self.model.grid_thickness, self.model.grid_tag_bold)
-
 
     def toggle_grid(self):
         '''
@@ -75,3 +72,23 @@ class Controller():
         '''
         self.model.grid_toggle_state()
         self.view.toggle_grid(self.model.is_grid_on, self.model.button_grid_toggle_text, [self.model.grid_tag_light, self.model.grid_tag_bold])
+
+    def generate_stitches(self):
+        '''
+        Generate the stitches
+        '''
+        rectangle_coordinates = self.model.calculate_stitch_rectangles(self.model.canvas_width, self.model.canvas_height,
+                                                                       self.model.grid_spacing_width, self.model.grid_spacing_height,
+                                                                       start_x=self.model.grid_start_x, start_y=self.model.grid_start_y,
+                                                                       end_x=self.model.grid_end_x, end_y=self.model.grid_end_y)
+        self.stitch_dict = self.view.draw_new_stitches(rectangle_coordinates, self.model.stitch_color)
+
+    def starting_palette(self):
+        '''
+        Get a new color from the palette ready in the stitches
+        '''
+        self.model.set_palette_color()
+        self.view.set_stitch_color(self.model.stitch_color)
+
+
+

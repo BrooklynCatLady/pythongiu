@@ -56,3 +56,27 @@ class View():
                 self.canvas.itemconfig(tag, state=tk.NORMAL)
             else:
                 self.canvas.itemconfig(tag, state=tk.HIDDEN)
+
+    def draw_new_stitches(self, rectangle_coordinates, stitch_color):
+        '''
+        Draw the rectangles that make the fillable stitches. Puts them in a dictionary for future use
+        '''
+        self.stitch_dict = {}
+        self.stitch_list = []
+        for coordinates in rectangle_coordinates:
+            id = self.canvas.create_rectangle(coordinates, fill=stitch_color, outline='', tag='stitch')
+            self.stitch_list.append(id)
+        self.canvas.bind('<Button-1>', self.fill_stitch)
+        return self.stitch_dict
+
+    def set_stitch_color(self, stitch_color):
+        self.stitch_color = stitch_color
+
+    def fill_stitch(self, event):
+        '''
+        Fill in a stitch when it is clicked on
+        '''
+        item = self.canvas.find_closest(event.x, event.y)
+        if item[0] in self.stitch_list:
+            if self.canvas.itemcget(item, 'fill') != self.stitch_color:
+                self.canvas.itemconfig(item, fill=self.stitch_color)
